@@ -1,9 +1,13 @@
 import pygame
+from pygame.sprite import Sprite
+
 from dino_runner.utils.constants import RUNNING, JUMPING, DUCKING
 
 X_POS = 80
 Y_POS = 310
 JUMP_VEL = 8.5
+
+
 class AlternativeDinosaur:
     def __init__(self):
         # Inicialize os atributos do dinossauro alternativo aqui
@@ -36,6 +40,8 @@ class Dinosaur:
             self.run()
         elif self.dino_jump:
             self.jump()
+        elif self.dino_duck:
+            self.duck() 
 
         if user_input [pygame.K_UP] and not self.dino_jump:
             self.dino_jump = True
@@ -83,5 +89,4 @@ class Dinosaur:
             self.step_index += 1  
 
     def draw(self, screen): 
-        self.duck() 
         screen.blit(self.image, (self.dino_rect.x, self.dino_rect.y))

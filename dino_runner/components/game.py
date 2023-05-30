@@ -2,7 +2,7 @@ import pygame
 
 from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS
 from dino_runner.components.dinosaur import Dinosaur
-
+from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 
 class Game:
     def __init__(self):
@@ -18,6 +18,7 @@ class Game:
         
         self.player = Dinosaur()
         self.selected_dinosaur = None
+        self.obstacle_manager = ObstacleManager()
 
     def run(self):
         self.show_start_screen()
@@ -37,12 +38,12 @@ class Game:
     def update(self):
         user_input = pygame.key.get_pressed()
         self.player.update(user_input)
+        self.obstacle_manager.update(self)
 
     def show_start_screen(self):
         start_font = pygame.font.Font(None, 40)
         start_text = start_font.render("Press any key to start", True, (0, 0, 0))
         start_text_rect = start_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
-
         running = True
         while running:
             for event in pygame.event.get():
@@ -51,20 +52,18 @@ class Game:
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
                     running = False
-
             self.screen.fill((255, 255, 255))
             self.screen.blit(ICON, (SCREEN_WIDTH // 2 - ICON.get_width() // 2, SCREEN_HEIGHT // 2 - ICON.get_height() // 2 - 70))
             self.screen.blit(start_text, start_text_rect)
             pygame.display.update()
             self.clock.tick(FPS)
     
-
-
     def draw(self):
         self.clock.tick(FPS)
         self.screen.fill((255, 255, 255))
         self.draw_background()
         self.player.draw(self.screen)
+        self.obstacle_manager.draw(self.screen)
         pygame.display.update()
         pygame.display.flip()
         
