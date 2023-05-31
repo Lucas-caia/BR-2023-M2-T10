@@ -29,7 +29,6 @@ class Bird:
         if self.rect.x < -self.rect.width:
             obstacles.remove(self)
 
-
     def draw(self, screen):
         screen.blit(self.image, self.rect)
 

@@ -4,6 +4,8 @@ from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, T
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 
+FONT_STYLE = "freesansbold.ttf"
+
 class Game:
     def __init__(self):
         pygame.init()
@@ -11,62 +13,61 @@ class Game:
         pygame.display.set_icon(ICON)
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
+        self.running = False
         self.playing = False
         self.game_speed = 20
         self.x_pos_bg = 0
         self.y_pos_bg = 380
+        self.score = 0
+        self.death_count = 0
         
         self.player = Dinosaur()
         self.selected_dinosaur = None
         self.obstacle_manager = ObstacleManager()
 
+    def execute(self):
+        self.running = True
+        while self.running:
+            if not self.playing:
+                self.show_menu()
+        pygame.display.quit()
+        pygame.quit()
+
     def run(self):
-        self.show_start_screen()
         # Game loop: events - update - draw
         self.playing = True
+        self.obstacle_manager.reset_obstacles()
         while self.playing:
             self.events()
             self.update()
             self.draw()
-        pygame.quit()
-
+ 
     def events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.playing = False
+                self.running = False
 
     def update(self):
         user_input = pygame.key.get_pressed()
         self.player.update(user_input)
         self.obstacle_manager.update(self)
+        self.update_score()
 
-    def show_start_screen(self):
-        start_font = pygame.font.Font(None, 40)
-        start_text = start_font.render("Press any key to start", True, (0, 0, 0))
-        start_text_rect = start_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
-        running = True
-        while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                if event.type == pygame.KEYDOWN:
-                    running = False
-            self.screen.fill((255, 255, 255))
-            self.screen.blit(ICON, (SCREEN_WIDTH // 2 - ICON.get_width() // 2, SCREEN_HEIGHT // 2 - ICON.get_height() // 2 - 70))
-            self.screen.blit(start_text, start_text_rect)
-            pygame.display.update()
-            self.clock.tick(FPS)
-    
+    def update_score(self):
+        self.score += 1
+        if self.score % 100 == 0:
+            self.game_speed += 5
+
     def draw(self):
         self.clock.tick(FPS)
-        self.screen.fill((255, 255, 255))
+        self.screen.fill((255, 255, 255)) # "#FFFFFF"
         self.draw_background()
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
+        self.draw_score()
         pygame.display.update()
         pygame.display.flip()
-        
 
     def draw_background(self):
         image_width = BG.get_width()
@@ -77,18 +78,43 @@ class Game:
             self.x_pos_bg = 0
         self.x_pos_bg -= self.game_speed
 
-  #  def dinosaur_selection_screen(self):
-  #      selected = False
-  #      while not selected:
-  #          for event in pygame.event.get():
-  #              if event.type == pygame.QUIT:
-  #                  pygame.quit()
+    def draw_score(self):
+        font = pygame.font.Font(FONT_STYLE, 22)
+        text = font.render(f"Score: {self.score}", True, (0, 0, 0))
+        text_rect = text.get_rect()
+        text_rect.center = (1000, 50)
+        self.screen.blit(text, text_rect)
 
-  #  def start_game(self):
-  #      self.dinosaur_selection_screen()
-  #      if self.selected_dinosaur == "default":
-  #          self.player = Dinosaur()
-   #     elif self.selected_dinosaur == "alternative":
-  #          self.player = AlternativeDinosaur()
+    def handle_events_on_menu(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.playing = False
+                self.running = False
+            elif event.type == pygame.KEYDOWN:
+                self.run()
 
-  #      self.run()
+    def show_menu(self):
+        self.screen.fill((255, 255, 255))
+        half_screen_height = SCREEN_HEIGHT // 2
+        half_screen_width = SCREEN_WIDTH // 2
+        
+        if self.death_count == 0:
+            font = pygame.font.Font(FONT_STYLE, 22)
+            text = font.render("Press any key to start", True, (0, 0, 0))
+            text_rect = text.get_rect()
+            text_rect.center = (half_screen_width, half_screen_height)
+            self.screen.blit(text, text_rect)
+        else:
+            self.screen.blit(ICON, (half_screen_width - 20, half_screen_height - 140))
+            # mostrar mensagem de "Press any key to restart"
+            # mostrar score atingido
+            # mostrar death_count
+
+            ## Resetar score e game_speed quando o jogo for 'restartado'
+            ## criar método para remover a repetição de código para o texto
+
+        pygame.display.flip()
+        self.handle_events_on_menu()
+
+
+
