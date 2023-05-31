@@ -1,6 +1,9 @@
+import pygame
 import random
 
 from dino_runner.utils.constants import SCREEN_WIDTH
+from dino_runner.components.obstacles.obstacle import Obstacle
+
 
 class Bird:
     def __init__(self, images):
@@ -26,5 +29,7 @@ class Bird:
         if self.rect.x < -self.rect.width:
             obstacles.remove(self)
 
+
     def draw(self, screen):
         screen.blit(self.image, self.rect)
+
