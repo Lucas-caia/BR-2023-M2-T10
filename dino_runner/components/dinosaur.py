@@ -34,7 +34,6 @@ class Dinosaur:
         self.dino_jump = False
         self.dino_duck = False
 
-
     def update(self, user_input):
         if self.dino_run:
             self.run()
@@ -58,7 +57,6 @@ class Dinosaur:
 
         if self.step_index >= 10:
             self.step_index = 0
-
 
     def run(self):
         self.image = RUNNING[0] if self.step_index < 5 else RUNNING[1]

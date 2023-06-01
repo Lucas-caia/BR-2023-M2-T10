@@ -73,3 +73,5 @@ HEART = pygame.image.load(os.path.join(IMG_DIR, 'Other/SmallHeart.png'))
 DEFAULT_TYPE = "default"
 
 GODZILLA = pygame.image.load(os.path.join(IMG_DIR, 'Other/godzila.png'))
+
+RESTART = pygame.image.load(os.path.join(IMG_DIR, 'Other/Reset.png'))
