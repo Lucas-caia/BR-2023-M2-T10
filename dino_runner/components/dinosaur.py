@@ -26,7 +26,8 @@ class Dinosaur(Sprite):
         self.dino_jump = False
         self.dino_duck = False
         self.setup_state()
-
+        self.is_dead = False
+        
     def setup_state(self):
         self.has_power_up = False
         self.shield = False

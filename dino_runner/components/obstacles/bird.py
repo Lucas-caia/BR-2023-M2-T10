@@ -1,34 +1,16 @@
-import pygame
-import random
-
-from dino_runner.utils.constants import SCREEN_WIDTH
+from dino_runner.utils.constants import BIRD
 from dino_runner.components.obstacles.obstacle import Obstacle
 
 
-class Bird:
-    def __init__(self, images):
-        self.images = images
-        self.image_index = 0
-        self.image = self.images[self.image_index]
-        self.rect = self.image.get_rect()
-        self.rect.x = SCREEN_WIDTH
-        self.rect.y = random.randint(210, 305)
-        self.animation_time = 5
-        self.current_time = 0
-
-    def update(self, game_speed, obstacles):
-        self.current_time += 1
-        if self.current_time >= self.animation_time:
-            self.current_time = 0
-            self.image_index += 1
-            if self.image_index >= len(self.images):
-                self.image_index = 0
-            self.image = self.images[self.image_index]
-
-        self.rect.x -= game_speed
-        if self.rect.x < -self.rect.width:
-            obstacles.remove(self)
+class Bird(Obstacle):
+    def __init__(self):
+        super().__init__(BIRD, 0)
+        self.rect.y = 250
+        self.step_index = 0
 
     def draw(self, screen):
-        screen.blit(self.image, self.rect)
+        screen.blit(self.image[self.step_index // 5], self.rect)
+        self.step_index += 1
 
+        if self.step_index >= 9:
+            self.step_index = 0

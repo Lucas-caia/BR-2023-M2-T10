@@ -76,3 +76,5 @@ SHIELD_TYPE = "shield"
 GODZILLA = pygame.image.load(os.path.join(IMG_DIR, 'Other/godzila.png'))
 
 RESTART = pygame.image.load(os.path.join(IMG_DIR, 'Other/Reset.png'))
+
+HAMMER_TYPE = HAMMER
