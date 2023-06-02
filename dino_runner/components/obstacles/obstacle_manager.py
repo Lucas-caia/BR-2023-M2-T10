@@ -13,6 +13,7 @@ class ObstacleManager:
 
     def update(self, game):
         if len(self.obstacles) == 0:
+            
             obstacle_type = random.choice(["cactus", "large_cactus", "bird"])
             if obstacle_type == "cactus":
                 self.obstacles.append(Cactus(SMALL_CACTUS))

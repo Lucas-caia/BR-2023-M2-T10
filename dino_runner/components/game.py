@@ -1,8 +1,9 @@
 import pygame
 
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, RESTART
+from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE, RESTART
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
+from dino_runner.components.power_ups.power_up_manager import PowerUpManager
 
 FONT_STYLE = "freesansbold.ttf"
 
@@ -27,6 +28,7 @@ class Game:
         self.player = Dinosaur()
         self.selected_dinosaur = None
         self.obstacle_manager = ObstacleManager()
+        self.power_up_manager = PowerUpManager()
 
     def execute(self):
         self.running = True
@@ -45,6 +47,8 @@ class Game:
         self.reset_score()
         self.playing = True
         self.obstacle_manager.reset_obstacles()
+        self.power_up_manager.reset_power_ups()
+        self.obstacle_manager.reset_obstacles()
         while self.running:
             self.events()
             if self.playing:
@@ -61,6 +65,7 @@ class Game:
 
     def update(self):
         user_input = pygame.key.get_pressed()
+        self.power_up_manager.update(self)
         self.player.update(user_input)
 
         if self.score > self.highscore:
@@ -90,6 +95,8 @@ class Game:
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
         self.draw_text(f"Score: {self.score}", (1000, 50))
+        self.draw_power_up_time()
+        self.power_up_manager.draw(self.screen)
         self.draw_text(f"Highscore: {self.highscore}", (1000, 80))
         pygame.display.update()
         pygame.display.flip()
@@ -109,6 +116,18 @@ class Game:
         text_rect = text_surface.get_rect()
         text_rect.center = pos
         self.screen.blit(text_surface, text_rect)
+
+    def draw_power_up_time(self):
+        if self.player.has_power_up:
+            time_to_show = round((self.player.power_up_time - pygame.time.get_ticks()) / 1000, 2)
+            if time_to_show >= 0:
+                self.draw_text(
+                    f"{self.player.type.capitalize()} enabled for {time_to_show} seconds",
+                    (500, 40),
+                )
+            else:
+                self.player.has_power_up = False
+                self.player.type = DEFAULT_TYPE
 
     def handle_events_on_menu(self):
         for event in pygame.event.get():
